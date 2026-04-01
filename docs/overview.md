@@ -7,7 +7,7 @@ A private web application for managing theatre ticket reservations within a fixe
 - Manage a fixed set of users (no public registration)
 - Admin can create performances and assign ticket limits
 - Members can reserve tickets
-- Members can resell  reserved tickets (offer the as free)
+- Members can cancel their tickets (make available but still consider reserved until taken by other member)
 - Prevent performance overbooking
 - Prevent member overbooking
 - Send basic email notifications
@@ -55,8 +55,8 @@ A private web application for managing theatre ticket reservations within a fixe
 - Email alert non-attendees if closely upcoming performance is free
 
 ## Business Rules
-- Reservations are first-come-first-served within wave reservation phases
-- first phase 1 ticket per wave, later unlimited
+- Reservations are first-come-first-served within the wave reservation phases
+- priority phase 1 ticket per wave, later unlimited
 - Total reserved tickets cannot exceed performance capacity
 - Total member reserved tickets in a season cannot exceed his season limit
 - All validation must be enforced server-side
@@ -82,7 +82,8 @@ A private web application for managing theatre ticket reservations within a fixe
 
 ## Data Model (High-Level)
 - User (Identity, Email, ClassName, OtherContact)
-- Performance (Id, TheatreId, Url, DateTime, Capacity)
+- Wave (Id, PriorityPhaseLengthDays)
+- Performance (Id, TheatreId, Url, DateTime, Capacity, Phase)
 - Reservation (Id, UserId, PerformanceId, TicketCount)
 - Theatre (Id, Url, Notes)
 - Play (Id, Name, Url, WikiUrl)
