@@ -80,20 +80,25 @@ A private web application for managing theatre ticket reservations within a fixe
 - Use dependency injection
 - Keep design simple, avoid over-engineering
 
-## Data Model (High-Level)
+## Data Model (High-Level, add more if needed)
 - User (Identity, Email, ClassName, OtherContact)
-- Wave (Id, PriorityPhaseLengthDays)
-- Performance (Id, TheatreId, Url, DateTime, Capacity, Phase)
-- Reservation (Id, UserId, PerformanceId, TicketCount)
+- Season (Id, Name, StartDate)
+- ReservationWave (Id, SeasonId, Name, StartDate, PriorityPhaseLengthDays)
+- Performance (Id, DateTime, Capacity, ReservationWaveId)
+- Reservation (Id, UserId, PerformanceId, Status, CreateDate, LastUpdateDate)
 - Theatre (Id, Url, Notes)
-- Play (Id, Name, Url, WikiUrl)
+- Play (Id, TheatreId, Name, Url, WikiUrl)
+- Subscription (UserId, SeasonId, ReservationsLimit)
 
 Relationships:
 - Performance → many Reservations
 - User → many Reservations
-- Theathre → many Performances
+- Theatre → many Performances
 - Play → many Performances
-- Theathre → many Plays
+- Theatre → many Plays
+- Season → many Performances
+- User → many Subscriptions
+- Season → many Subscriptions
 
 ## Security
 - Identity for authentication

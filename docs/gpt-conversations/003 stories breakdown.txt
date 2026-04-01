@@ -1,0 +1,214 @@
+Let's go break down the top-level stories into tasks that can be easily processed by copilot agents. 
+Please number the tasks in pattern KMD-epicNumber-taskNumber, where the epics are those stories you proposed. Let's start with this epic 2:
+
+Performance Management (Admin)
+
+As an Admin:
+
+I want to create a performance so that members can reserve tickets
+I want to edit a performance so that I can correct mistakes
+I want to delete a performance so that cancelled events are removed
+I want to set ticket capacity so that overbooking is prevented
+I want to assign a play and theatre to a performance so that events are well described
+I want to define reservation waves so that booking rules are enforced
+
+You picked the part that quietly hides half the system complexity. Bold move. This “simple CRUD” is exactly where projects start pretending to be easy and then slowly mutate.
+
+Let’s turn it into something Copilot can actually chew on without hallucinating half your domain.
+
+🎭 Epic 2: Performance Management (Admin)
+🧱 Data & Model Tasks
+
+KMD-2-1
+Create Performance entity with basic fields (Id, DateTime, Capacity, TheatreId, PlayId, Url)
+
+KMD-2-2
+Add navigation properties and relationships:
+
+Performance → Theatre
+Performance → Play
+Performance → Reservations
+
+KMD-2-3
+Create EF Core configuration for Performance entity (Fluent API)
+
+KMD-2-4
+Create database migration for Performance entity
+
+🏗️ Admin Create Performance
+
+KMD-2-5
+Create Razor Page for Performance creation (GET)
+
+KMD-2-6
+Implement form UI for creating performance:
+
+Date & time
+Capacity
+Theatre selection
+Play selection
+URL
+
+KMD-2-7
+Implement POST handler for creating performance
+
+KMD-2-8
+Add server-side validation:
+
+DateTime required and in future
+Capacity > 0
+Theatre and Play required
+
+KMD-2-9
+Create PerformanceService method: CreatePerformance
+
+KMD-2-10
+Add authorization: only Admin can access create page
+
+✏️ Admin Edit Performance
+
+KMD-2-11
+Create Razor Page for editing performance (GET)
+
+KMD-2-12
+Pre-fill form with existing performance data
+
+KMD-2-13
+Implement POST handler for updating performance
+
+KMD-2-14
+Create PerformanceService method: UpdatePerformance
+
+KMD-2-15
+Add validation rules:
+
+Prevent reducing capacity below already reserved tickets
+Validate all required fields
+
+KMD-2-16
+Handle concurrency (optional but smart):
+
+Add RowVersion or equivalent
+🗑️ Admin Delete Performance
+
+KMD-2-17
+Create delete confirmation page
+
+KMD-2-18
+Implement delete handler
+
+KMD-2-19
+Create PerformanceService method: DeletePerformance
+
+KMD-2-20
+Add rule:
+
+Prevent deletion if reservations exist OR
+Require explicit confirmation with cascade handling (pick one and stick to it)
+🎟️ Capacity Management
+
+(Yes, this is technically “just a field,” but also a future bug factory.)
+
+KMD-2-21
+Add validation to ensure capacity cannot be negative
+
+KMD-2-22
+Enforce capacity constraint in service layer
+
+KMD-2-23
+Add helper method to compute remaining capacity
+
+🎭 Theatre & Play Assignment
+
+KMD-2-24
+Load Theatre list for dropdown selection
+
+KMD-2-25
+Load Play list for dropdown selection
+
+KMD-2-26
+Validate selected Theatre and Play exist
+
+KMD-2-27
+Add display of Theatre and Play in performance list/detail
+
+🌊 Reservation Waves (aka “this escalated quickly”)
+
+You thought capacity was tricky. This is where logic starts getting personality.
+
+KMD-2-28
+Design ReservationWave entity:
+
+Id
+PerformanceId
+StartTime
+EndTime
+MaxTicketsPerUser (nullable for unlimited)
+
+KMD-2-29
+Add relationship: Performance → ReservationWaves
+
+KMD-2-30
+Create EF Core configuration for ReservationWave
+
+KMD-2-31
+Create migration for ReservationWave
+
+Wave Management (Admin UI)
+
+KMD-2-32
+Create UI for adding waves to performance
+
+KMD-2-33
+Implement create wave handler
+
+KMD-2-34
+Implement edit wave handler
+
+KMD-2-35
+Implement delete wave handler
+
+Wave Validation Logic
+
+KMD-2-36
+Ensure wave times do not overlap
+
+KMD-2-37
+Ensure waves are within valid time range before performance
+
+KMD-2-38
+Enforce at least one wave exists (if required by business rule)
+
+KMD-2-39
+Validate first wave ticket limit (e.g., 1 ticket rule)
+
+Wave Business Logic Hook
+
+KMD-2-40
+Add service method to determine active wave for a performance
+
+KMD-2-41
+Expose wave constraints for reservation logic (future integration point)
+
+🔐 Authorization & Safety
+
+KMD-2-42
+Restrict all performance management pages to Admin role
+
+KMD-2-43
+Add server-side validation for all operations (no trust in UI, obviously)
+
+🧠 Reality Check
+
+This “one epic” already:
+
+introduces a second entity (ReservationWave)
+defines core validation rules that will affect reservations
+creates future coupling with notification logic
+
+In other words, this is not CRUD. This is your domain backbone wearing a CRUD costume.
+
+Next step, if you want to avoid rewriting half of this later, is breaking down Reservation Management. That’s where your rules will either hold… or collapse in a very educational way.
+
+Zbývajících zpráv: 1. Pokud chceš v konverzaci pokračovat, upgraduj na plán Plus
+Upgradovat

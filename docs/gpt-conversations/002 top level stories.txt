@@ -1,0 +1,228 @@
+I need first to make a list of user stories for my project that I will want you to create later one by one. This is the project:
+# Theatre Ticket Reservation App – Overview
+
+## Summary
+A private web application for managing theatre ticket reservations within a fixed group of members. An administrator defines performances and available tickets for them in (monthly) waves. Administrator defines performances count limit for each member and season. Members reserve tickets up to the limits. The app is not public-facing.
+
+## Goals for MVP
+- Manage a fixed set of users (no public registration)
+- Admin can create performances and assign ticket limits
+- Members can reserve tickets
+- Members can resell  reserved tickets (offer the as free)
+- Prevent performance overbooking
+- Prevent member overbooking
+- Send basic email notifications
+- Simple, maintainable solution
+
+## Possible goals after MVP phase
+- Multi-tenant architecture
+- Seat-level selection (only ticket counts for MVP)
+
+## Non-Goals
+- Payments or billing
+- Public sign-up
+- Mobile app or complex frontend
+
+## Core Concepts
+- User (Admin or Member, via ASP.NET Identity)
+- Performance (event with date/time and ticket capacity)
+- Reservation (user reserves N tickets for a performance)
+
+## Functional Requirements
+
+### Authentication
+- Use ASP.NET Core Identity
+- Users are pre-created by admin upon a season member list
+- Roles: Admin, Member
+
+### Admin
+- Create/edit/delete performances
+- Set ticket capacity
+- set user&season limit
+- View all season reservations
+- View all performance reservations
+- View user's reservations
+- reserve and unreserve performance for a member
+- email season members or performance attendees
+
+### Member
+- View performances
+- Create/cancel reservations
+- View own reservations
+
+### Notifications
+- Email on reservation confirmation and important changes
+- Email alert on upcoming reserved performance
+- Email alert non-attendees if closely upcoming performance is free
+
+## Business Rules
+- Reservations are first-come-first-served within wave reservation phases
+- first phase 1 ticket per wave, later unlimited
+- Total reserved tickets cannot exceed performance capacity
+- Total member reserved tickets in a season cannot exceed his season limit
+- All validation must be enforced server-side
+
+## Technical Stack
+- ASP.NET Core Razor Pages
+- C#
+- Entity Framework Core
+- Azure SQL (Free tier)
+- ASP.NET Core Identity
+- Azure App Service
+- Email via Azure Communication Services
+- Application Insights logging
+
+## Architecture
+- Razor Pages (no MVC unless needed)
+- Layers:
+  - Pages (UI)
+  - Services (business logic)
+  - Data (EF Core)
+- Use dependency injection
+- Keep design simple, avoid over-engineering
+
+## Data Model (High-Level)
+- User (Identity, Email, ClassName, OtherContact)
+- Performance (Id, TheatreId, Url, DateTime, Capacity)
+- Reservation (Id, UserId, PerformanceId, TicketCount)
+- Theatre (Id, Url, Notes)
+- Play (Id, Name, Url, WikiUrl)
+
+Relationships:
+- Performance → many Reservations
+- User → many Reservations
+- Theathre → many Performances
+- Play → many Performances
+- Theathre → many Plays
+
+## Security
+- Identity for authentication
+- Role-based authorization (Admin vs Member)
+- Validate all inputs server-side
+- Prevent overbooking at database/service level
+- No public content
+- Keep all user logins cached in memory to avoid accessing database during login page attack
+
+## Deployment
+- Azure App Service
+- Azure SQL database
+- Configuration via environment variables
+- CI/CD via GitHub Actions (preferred)
+
+## Development Guidance
+- Prefer small, incremental changes
+- Keep project always buildable
+- Use EF Core migrations for schema changes
+- Generate clear, maintainable code (no unnecessary abstractions)
+- Avoid introducing new frameworks without clear need
+
+## Out of Scope
+- Payments
+- Public APIs
+- Real-time updates (e.g., SignalR)
+- Complex UI frameworks
+
+So you’ve designed a nicely sane system. Naturally the next step is to turn it into a pile of user stories that will slowly spiral into existential doubt. Let’s do it properly.
+
+I’ll group them so you don’t end up with a random grocery list of features that nobody can navigate later.
+
+🎭 User Stories – Theatre Ticket Reservation App (MVP)
+👤 Authentication & User Management
+
+As an Admin:
+
+I want to create users so that members can access the system
+I want to assign roles (Admin/Member) so that permissions are enforced
+I want to deactivate a user so that former members cannot log in
+
+As a User:
+
+I want to log in so that I can access the system
+I want to log out so that my session is secure
+🎬 Performance Management (Admin)
+
+As an Admin:
+
+I want to create a performance so that members can reserve tickets
+I want to edit a performance so that I can correct mistakes
+I want to delete a performance so that cancelled events are removed
+I want to set ticket capacity so that overbooking is prevented
+I want to assign a play and theatre to a performance so that events are well described
+I want to define reservation waves so that booking rules are enforced
+🎟️ Reservation Management (Member)
+
+As a Member:
+
+I want to view a list of performances so that I can choose what to attend
+I want to see available ticket count so that I know if I can reserve
+I want to reserve tickets so that I can attend a performance
+I want to cancel my reservation so that unused tickets are freed
+I want to see my reservations so that I can track what I booked
+🔁 Ticket Resale / Release
+
+As a Member:
+
+I want to release my reserved tickets so that others can take them
+I want to see available released tickets so that I can reserve them
+⚖️ Reservation Rules & Limits
+
+As a System:
+
+I must prevent reservations exceeding performance capacity
+I must prevent users exceeding their season ticket limit
+I must enforce wave rules (e.g., first phase = 1 ticket)
+I must process reservations in first-come-first-served order
+🧑‍💼 Admin Reservation Control
+
+As an Admin:
+
+I want to create a reservation for a member so that I can assist them
+I want to cancel a member’s reservation so that I can fix issues
+I want to view all reservations for a performance so that I can manage attendance
+I want to view all reservations for a user so that I can monitor usage
+I want to view all reservations in a season so that I have full oversight
+📧 Notifications
+
+As a System:
+
+I want to send a confirmation email after reservation so that users are informed
+I want to notify users about upcoming performances so that they don’t forget
+I want to notify users when tickets become available so that they can reserve
+
+As an Admin:
+
+I want to email all members so that I can communicate announcements
+I want to email attendees of a performance so that I can share updates
+🏛️ Theatre & Play Management
+
+As an Admin:
+
+I want to manage theatres so that performances can be categorized
+I want to manage plays so that performances are linked to content
+🔐 Security & Validation
+
+As a System:
+
+I must validate all inputs so that invalid data is not stored
+I must enforce role-based access so that only authorized users perform actions
+I must protect login from abuse so that the system remains available
+🧱 Technical / System-Level Stories
+
+These are the ones people forget and then cry later.
+
+As a Developer, I want to use EF Core migrations so that schema changes are manageable
+As a Developer, I want logging via Application Insights so that issues can be diagnosed
+As a System, I want configuration via environment variables so that deployment is flexible
+As a Developer, I want CI/CD pipeline so that deployments are automated
+🧠 Notes (before you go build a monster)
+These are high-level stories, not tasks
+Each of these will explode into 3–10 smaller stories or tasks later
+You already have some hidden complexity bombs:
+reservation waves (this will bite you)
+resale logic (this will definitely bite you)
+admin overrides vs system rules (classic source of bugs)
+
+If you want the next step done properly, the move is obvious:
+we take one slice (like reservations) and break it into implementation-ready stories + acceptance criteria + edge cases.
+
+And yes, that’s where things stop being fun.
