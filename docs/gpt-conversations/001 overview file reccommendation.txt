@@ -1,0 +1,309 @@
+I’m planning to develop a small web application for personal use (within a small group) using a “vibe coding” approach. The purpose of the application will be reservation of theatre tickets within that group. There are fixed members of the group for the season (I need a basic user profile+authentication btw) and the administrator puts in a limited number of tickets to a set of performances and the group members reserve them upon some rules. 
+
+I’m going to host the result on Azure – it will be built using ASP.NET Core Razor Pages and will have a database backend on Azure SQL Free and will send email alerts to the members.
+
+During development, I want to use the Copilot agentic mode as much as possible, so that the whole thing runs (almost) automatically, including deployment—of course with at least basic security in place.
+
+Now I have a clean repository and I am going to write the /docs/overview.md file that will contain the basic project overview giving context to the Copilot agents. I want you to propose the structure of this file.
+
+So you’re about to let an AI co-develop and deploy your app based on a single markdown file. Nothing could possibly go wrong. Delightful.
+
+Still, this is actually a solid use case for “vibe coding” if you give it enough structure to not hallucinate a ticket scalping platform with blockchain integration.
+
+Here’s a clean, practical structure for your /docs/overview.md that gives Copilot just enough guardrails to behave like a disciplined junior dev instead of an overexcited intern.
+
+/docs/overview.md – Suggested Structure
+1. Project Summary
+
+Short, high-signal description.
+
+What the app does
+Who it’s for
+Key constraints (small group, private use)
+
+Example content:
+
+A private web application for managing theatre ticket reservations within a fixed group of members. An administrator defines performances and available tickets, and members reserve them according to defined rules.
+
+2. Goals and Non-Goals
+
+Because otherwise the AI will try to reinvent Ticketmaster.
+
+Goals
+Manage a fixed group of users
+Allow admin to create performances and allocate tickets
+Allow users to reserve tickets under defined constraints
+Send email notifications
+Simple, maintainable UI (not a design award winner)
+Non-Goals
+Public registration
+Payments / billing
+Complex seat selection (no seat maps)
+Mobile app
+Multi-tenant SaaS empire
+3. Core Domain Concepts
+
+This is where you stop the AI from naming things like ThingManagerService.
+
+Define entities clearly:
+
+User
+Member of the group
+Authenticated
+Performance
+Theatre play/event with date/time
+Ticket Allocation
+Number of tickets available for a performance
+Reservation
+User reserves N tickets for a performance
+
+Optional but useful:
+
+Season
+Reservation Rules (e.g., max tickets per user)
+4. Functional Requirements
+4.1 Authentication & Users
+Login/logout
+No public registration (users pre-created by admin)
+Roles:
+Admin
+Member
+4.2 Admin Features
+Create/edit/delete performances
+Set number of available tickets
+View all reservations
+Optionally adjust reservations
+4.3 Member Features
+View available performances
+Reserve tickets
+Cancel reservation (if allowed)
+See their reservations
+4.4 Notifications
+Email on:
+New performance
+Reservation confirmation
+Changes/cancellations
+5. Business Rules
+
+This is critical. Without this, the AI will “interpret” rules creatively.
+
+Examples:
+
+Max X tickets per user per performance
+Reservations are first-come-first-served
+Cannot exceed available tickets
+Optional deadlines for reservation
+6. Technical Stack
+
+Be explicit so Copilot doesn’t decide you actually meant Node.js + Mongo + cosmic vibes.
+
+Backend: ASP.NET Core Razor Pages
+Language: C#
+Database: Azure SQL (Free tier)
+ORM: Entity Framework Core
+Authentication: ASP.NET Core Identity
+Email: Azure Communication Services / SMTP (specify which)
+Hosting: Azure App Service
+7. Architecture Overview
+
+Keep it simple but structured:
+
+Razor Pages (no MVC unless needed)
+Layered structure:
+Pages
+Services
+Data (EF Core)
+Dependency Injection throughout
+
+Optional note:
+
+Keep architecture simple and avoid over-engineering (no microservices, no CQRS unless clearly needed).
+
+8. Data Model (High-Level)
+
+Not full EF config, just intent:
+
+User (Identity)
+Performance
+Reservation
+(Optional) TicketAllocation or just a field on Performance
+
+Define relationships:
+
+One Performance → many Reservations
+One User → many Reservations
+9. Security Considerations
+
+Yes, even for your cozy theatre club.
+
+Use ASP.NET Core Identity
+Password hashing (default Identity)
+Authorization:
+Admin-only pages protected by role
+Prevent overbooking (server-side validation)
+Basic input validation
+10. Deployment
+
+Spell it out so Copilot doesn’t invent Kubernetes.
+
+Target: Azure App Service
+Database: Azure SQL Free
+CI/CD:
+GitHub Actions (preferred)
+Environment variables:
+Connection string
+Email config
+11. Development Approach (Copilot Guidance)
+
+This is the part that actually makes “agentic mode” usable.
+
+Prefer small, incremental changes
+Generate:
+EF Core models + migrations
+Razor Pages with PageModel
+Services for business logic
+Always:
+Keep code compilable
+Avoid breaking changes without migration
+Add basic unit tests where reasonable (optional but nice)
+12. Coding Conventions
+
+Because otherwise you’ll get five naming styles in one file.
+
+C# naming conventions (PascalCase, etc.)
+Async methods use Async suffix
+Services via interfaces (IReservationService)
+Keep methods small and readable
+13. Open Questions / Future Enhancements
+
+Let the AI know what not to assume is done:
+
+Seat-level reservations?
+Waiting list?
+Calendar integration?
+Export to PDF?
+14. Out of Scope (Reinforcement Section)
+
+Yes, you already said it. Say it again. Machines need repetition.
+
+No payments
+No public users
+No fancy UI frameworks
+No real-time updates (SignalR optional, not required)
+
+If you write this halfway decently, Copilot will behave like a competent junior dev who occasionally needs supervision instead of a caffeinated idea generator rewriting your app every third commit.
+
+And honestly, that’s about the best outcome anyone gets.
+
+So, will you write such a file for me, so that it fits into one page?
+
+You want “one page” and “complete enough for an AI to not go rogue.” Those two are natural enemies, but fine, let’s thread that needle.
+
+Here’s a tight, high-signal version that won’t drown the agent in prose or leave it inventing features like social login with NFTs.
+
+# Theatre Ticket Reservation App – Overview
+
+## Summary
+A private web application for managing theatre ticket reservations within a fixed group of members. An administrator defines performances and available tickets. Members reserve tickets under simple rules. The app is not public-facing.
+
+## Goals
+- Manage a fixed set of users (no public registration)
+- Admin can create performances and assign ticket limits
+- Members can reserve and cancel tickets
+- Prevent overbooking
+- Send basic email notifications
+- Simple, maintainable solution
+
+## Non-Goals
+- Payments or billing
+- Public sign-up
+- Seat-level selection (only ticket counts)
+- Mobile app or complex frontend
+- Multi-tenant architecture
+
+## Core Concepts
+- User (Admin or Member, via ASP.NET Identity)
+- Performance (event with date/time and ticket capacity)
+- Reservation (user reserves N tickets for a performance)
+
+## Functional Requirements
+
+### Authentication
+- Use ASP.NET Core Identity
+- Users are pre-created by admin
+- Roles: Admin, Member
+
+### Admin
+- Create/edit/delete performances
+- Set ticket capacity
+- View all reservations
+
+### Member
+- View performances
+- Create/cancel reservations
+- View own reservations
+
+### Notifications
+- Email on reservation confirmation and important changes
+
+## Business Rules
+- Reservations are first-come-first-served
+- Total reserved tickets cannot exceed capacity
+- Optional: limit tickets per user per performance
+- All validation must be enforced server-side
+
+## Technical Stack
+- ASP.NET Core Razor Pages
+- C#
+- Entity Framework Core
+- Azure SQL (Free tier)
+- ASP.NET Core Identity
+- Azure App Service
+- Email via SMTP or Azure Communication Services
+
+## Architecture
+- Razor Pages (no MVC unless needed)
+- Layers:
+  - Pages (UI)
+  - Services (business logic)
+  - Data (EF Core)
+- Use dependency injection
+- Keep design simple, avoid over-engineering
+
+## Data Model (High-Level)
+- User (Identity)
+- Performance (Id, Name, DateTime, Capacity)
+- Reservation (Id, UserId, PerformanceId, TicketCount)
+
+Relationships:
+- Performance → many Reservations
+- User → many Reservations
+
+## Security
+- Identity for authentication
+- Role-based authorization (Admin vs Member)
+- Validate all inputs server-side
+- Prevent overbooking at database/service level
+
+## Deployment
+- Azure App Service
+- Azure SQL database
+- Configuration via environment variables
+- CI/CD via GitHub Actions (preferred)
+
+## Development Guidance
+- Prefer small, incremental changes
+- Keep project always buildable
+- Use EF Core migrations for schema changes
+- Generate clear, maintainable code (no unnecessary abstractions)
+- Avoid introducing new frameworks without clear need
+
+## Out of Scope
+- Payments
+- Public APIs
+- Real-time updates (e.g., SignalR)
+- Complex UI frameworks
+
+This is short enough that an AI might actually read all of it before impulsively generating 17 extra services and a repository pattern it doesn’t need.
+
+And it’s structured enough that when it does mess something up, at least you’ll know exactly which section it ignored.
