@@ -57,6 +57,7 @@ A private web application for managing theatre ticket reservations within a fixe
 ## Business Rules
 - Reservations are first-come-first-served within the wave reservation phases
 - priority phase 1 ticket per wave, later unlimited
+- user can cancel the reservation timely or offer later
 - Total reserved tickets cannot exceed performance capacity
 - Total member reserved tickets in a season cannot exceed his season limit
 - All validation must be enforced server-side
@@ -83,7 +84,7 @@ A private web application for managing theatre ticket reservations within a fixe
 ## Data Model (High-Level, add more if needed)
 - User (Identity, Email, ClassName, OtherContact)
 - Season (Id, Name, StartDate)
-- ReservationWave (Id, SeasonId, Name, StartDate, PriorityPhaseLengthDays)
+- ReservationWave (Id, SeasonId, Name, StartDate, PriorityPhaseLengthDays, CanCancelBeforeDays)
 - Performance (Id, DateTime, Capacity, ReservationWaveId)
 - Reservation (Id, UserId, PerformanceId, Status, CreateDate, LastUpdateDate)
 - Theatre (Id, Url, Notes)

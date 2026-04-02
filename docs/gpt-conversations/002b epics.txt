@@ -1,0 +1,206 @@
+You didn’t just “update the model.” You quietly upgraded the whole system from “cute reservation app” to “this now has temporal logic, state transitions, and cross-entity constraints.” Subtle.
+
+Good news: this is a better design. Bad news: your stories now need to stop pretending they’re simple.
+
+I’ll update and extend the epics so they actually reflect reality instead of wishful thinking.
+
+🎭 Updated Epics & User Stories (MVP)
+🧩 Epic 1: Authentication & User Management
+
+(no major change, still boring and stable)
+
+Stories:
+
+Admin manages users (create, deactivate)
+User logs in/out
+Role-based access (Admin/Member)
+🎬 Epic 2: Performance Management (Admin) (UPDATED)
+
+Now tied to Season + ReservationWave, not floating in space.
+
+Stories:
+
+Admin creates a performance within a season
+Admin assigns performance to a reservation wave
+Admin sets and updates capacity
+Admin edits performance details
+Admin deletes performance (with constraints)
+Admin views performance details including reservations
+
+👉 Key change:
+
+Performance is no longer standalone → it belongs to a Season + Wave
+🌊 Epic 3: Reservation Wave Management (Admin) (NEW, extracted because it got serious)
+
+You promoted waves to first-class citizens. They deserve their own epic.
+
+Stories:
+
+Admin creates a reservation wave for a season
+Admin defines wave start date
+Admin defines priority phase duration (e.g. first X days = 1 ticket)
+Admin edits waves
+Admin deletes waves (if not used)
+Admin ensures waves do not overlap in a season
+System determines whether current time is:
+outside wave
+in priority phase
+in free phase
+
+👉 This is now core business logic, not a side feature.
+
+📅 Epic 4: Season Management (Admin) (NEW)
+
+You added Season. That’s not a field, that’s a whole axis of logic.
+
+Stories:
+
+Admin creates a season
+Admin defines season start date
+Admin views season overview
+Admin associates performances with a season
+Admin manages subscriptions per season
+🎟️ Epic 5: Reservation Management (Member & Admin) (HEAVILY UPDATED)
+
+Now includes status + lifecycle, which means this is no longer CRUD.
+
+Stories (Member):
+
+Member views available performances (filtered by season/wave)
+Member creates reservation
+Member cancels reservation (makes tickets available but keeps ownership until taken)
+Member views own reservations with status
+
+Stories (Admin):
+
+Admin creates reservation for a member
+Admin cancels reservation
+Admin views reservations per:
+performance
+user
+season
+🔄 Epic 6: Reservation Lifecycle & Ticket Reallocation (NEW, because your “cancel” is not cancel)
+
+This is where your “cancel but still reserved” idea lives. And causes trouble.
+
+Stories:
+
+Reservation has statuses (Active, Released, Reassigned, Cancelled?)
+Member can mark reservation as released
+Released tickets become available to others
+Another member can take released tickets
+Ownership transfers correctly
+System updates reservation timestamps
+
+👉 This is state machine logic whether you like it or not.
+
+⚖️ Epic 7: Limits & Constraints Enforcement (EXPANDED)
+
+Previously implicit. Now needs to be explicit or it will break.
+
+Stories:
+
+System enforces performance capacity
+System enforces per-user season limit (via Subscription)
+System enforces:
+priority phase → max 1 ticket
+later phase → unlimited (or configurable)
+System enforces first-come-first-served ordering
+System prevents race-condition overbooking (service/db level)
+📊 Epic 8: Subscription & User Limits (NEW)
+
+You introduced Subscription. That’s a whole subsystem now.
+
+Stories:
+
+Admin assigns subscription to user for a season
+Admin sets reservation limit per user per season
+System calculates user’s current reserved tickets in season
+System blocks reservations when limit exceeded
+📧 Epic 9: Notifications
+
+(Same idea, but now tied to states and waves)
+
+Stories:
+
+Send email on reservation creation
+Send email on reservation release
+Notify users when tickets become available
+Notify users before performance
+Admin can email:
+all season members
+performance attendees
+🏛️ Epic 10: Theatre & Play Management
+
+Small but necessary.
+
+Stories:
+
+Admin manages theatres
+Admin manages plays (linked to theatre)
+System links plays to performances
+🔐 Epic 11: Security & Validation
+
+Still your safety net.
+
+Stories:
+
+Enforce role-based authorization
+Validate all inputs server-side
+Protect login from abuse
+Ensure no unauthorized data access
+🧱 Epic 12: Technical & Infrastructure
+
+The stuff everyone postpones and regrets.
+
+Stories:
+
+EF Core migrations
+Logging (Application Insights)
+Config via environment variables
+CI/CD pipeline
+🧠 What Actually Changed (aka what will hurt later)
+1. You introduced time-based logic
+Season
+Wave
+Priority phase
+
+That means:
+
+bugs won’t be obvious
+testing gets harder
+Copilot will absolutely guess wrong without help
+2. You introduced state transitions
+
+Reservation:
+
+Active → Released → Reassigned
+
+That’s not CRUD anymore. That’s a workflow.
+
+3. You introduced cross-entity constraints
+
+Reservation depends on:
+
+Performance capacity
+Wave phase
+Subscription limit
+Other users (released tickets)
+
+That’s the part where systems go from “works locally” to “why is production on fire?”
+
+🧭 What you should do next
+
+Do not rush into coding.
+
+Next smart move:
+👉 Break down Epic 5 (Reservation Management) and Epic 6 (Lifecycle)
+
+Because:
+
+that’s where 80% of bugs will live
+that’s where Copilot needs the most precision
+that’s where your business rules actually exist
+
+You’re building something surprisingly well thought-out.
+Now you just need to stop treating the hardest parts like they’re obvious, because they’re not.
