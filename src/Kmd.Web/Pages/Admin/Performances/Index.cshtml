@@ -1,0 +1,91 @@
+@page
+@model Kmd.Web.Pages.Admin.Performances.IndexModel
+@{
+    ViewData["Title"] = "Performances";
+}
+
+<h1>Performances</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Create New Performance</a>
+</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form method="get" class="mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-auto">
+            <label for="seasonId" class="form-label">Season</label>
+            <select name="seasonId" id="seasonId" class="form-select">
+                <option value="">All</option>
+                @foreach (var s in Model.Seasons)
+                {
+                    <option value="@s.Id" selected="@(Model.SeasonFilter == s.Id)">@s.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <label for="waveId" class="form-label">Wave</label>
+            <select name="waveId" id="waveId" class="form-select">
+                <option value="">All</option>
+                @foreach (var w in Model.Waves)
+                {
+                    <option value="@w.Id" selected="@(Model.WaveFilter == w.Id)">@w.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <label for="theatreId" class="form-label">Theatre</label>
+            <select name="theatreId" id="theatreId" class="form-select">
+                <option value="">All</option>
+                @foreach (var t in Model.Theatres)
+                {
+                    <option value="@t.Id" selected="@(Model.TheatreFilter == t.Id)">@t.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-secondary">Filter</button>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date / Time</th>
+            <th>Play</th>
+            <th>Theatre</th>
+            <th>Reservations</th>
+            <th>Wave</th>
+            <th>Season</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var perf in Model.Performances)
+        {
+            var isPast = perf.DateTime < DateTime.Now;
+            var activeCount = perf.Reservations.Count(r => r.Status == Kmd.Web.Data.ReservationStatus.Active);
+            <tr class="@(isPast ? "table-secondary text-muted" : "")">
+                <td>@perf.DateTime.ToString("g")</td>
+                <td>@perf.Play.Name</td>
+                <td>@perf.Theatre.Name</td>
+                <td>@activeCount / @perf.Capacity</td>
+                <td>@perf.ReservationWave.Name</td>
+                <td>@perf.ReservationWave.Season.Name</td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@perf.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a asp-page="Delete" asp-route-id="@perf.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
