@@ -1,0 +1,46 @@
+@page "{id:int}"
+@model Kmd.Web.Pages.MyReservations.CancelModel
+@{
+    ViewData["Title"] = "Cancel Reservation";
+}
+
+<h1>Cancel Reservation</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Play</dt>
+            <dd class="col-sm-9">@Model.Reservation.Performance.Play.Name</dd>
+            <dt class="col-sm-3">Theatre</dt>
+            <dd class="col-sm-9">@Model.Reservation.Performance.Theatre.Name</dd>
+            <dt class="col-sm-3">Date / Time</dt>
+            <dd class="col-sm-9">@Model.Reservation.Performance.DateTime.ToString("g")</dd>
+            <dt class="col-sm-3">Season / Wave</dt>
+            <dd class="col-sm-9">@Model.Reservation.Performance.ReservationWave.Season.Name / @Model.Reservation.Performance.ReservationWave.Name</dd>
+        </dl>
+    </div>
+</div>
+
+@if (Model.IsTimelyCancellation)
+{
+    <div class="alert alert-info">
+        <strong>Timely cancellation.</strong> The ticket will be freed and your season reservation count will decrease.
+        <br />Cancellation deadline: @Model.CancelDeadline.ToString("g")
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        <strong>Late cancellation.</strong> The ticket will be offered to others, but it will still count toward your season reservation limit
+        until someone else takes it.
+        <br />Cancellation deadline was: @Model.CancelDeadline.ToString("g")
+    </div>
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Reservation.Id" />
+    <button type="submit" class="btn btn-danger">
+        @(Model.IsTimelyCancellation ? "Cancel Reservation" : "Offer Reservation")
+    </button>
+    <a asp-page="Index" class="btn btn-secondary">Back</a>
+</form>
