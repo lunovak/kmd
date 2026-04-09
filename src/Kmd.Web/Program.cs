@@ -22,6 +22,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<CachedUserStore>();
 
+// Services
+builder.Services.AddScoped<UserService>();
+
 // Authorization - require authenticated users by default
 builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(new AuthorizationPolicyBuilder()

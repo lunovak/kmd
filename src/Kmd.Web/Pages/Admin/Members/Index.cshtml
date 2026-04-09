@@ -1,0 +1,60 @@
+@page
+@model Kmd.Web.Pages.Admin.Members.IndexModel
+@{
+    ViewData["Title"] = "Members";
+}
+
+<h1>Members</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Create New Member</a>
+</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Class</th>
+            <th>Other Contact</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var member in Model.Members)
+        {
+            var isActive = Model.IsActive(member);
+            <tr class="@(isActive ? "" : "table-secondary text-muted")">
+                <td>@member.Email</td>
+                <td>@member.ClassName</td>
+                <td>@member.OtherContact</td>
+                <td>@(isActive ? "Active" : "Inactive")</td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@member.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    @if (isActive)
+                    {
+                        <form method="post" asp-page-handler="Deactivate" asp-route-id="@member.Id" class="d-inline"
+                              onsubmit="return confirm('Deactivate this member?');">
+                            <button type="submit" class="btn btn-sm btn-outline-warning">Deactivate</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" asp-page-handler="Reactivate" asp-route-id="@member.Id" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-success">Reactivate</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

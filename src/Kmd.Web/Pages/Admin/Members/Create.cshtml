@@ -1,0 +1,32 @@
+@page
+@model Kmd.Web.Pages.Admin.Members.CreateModel
+@{
+    ViewData["Title"] = "Create Member";
+}
+
+<h1>Create Member</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ClassName" class="form-label">Class</label>
+        <input asp-for="ClassName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="OtherContact" class="form-label">Other Contact</label>
+        <input asp-for="OtherContact" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" class="form-control" type="password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>

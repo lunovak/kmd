@@ -1,0 +1,40 @@
+@page "{id}"
+@model Kmd.Web.Pages.Admin.Members.EditModel
+@{
+    ViewData["Title"] = "Edit Member";
+}
+
+<h1>Edit Member</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ClassName" class="form-label">Class</label>
+        <input asp-for="ClassName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="OtherContact" class="form-label">Other Contact</label>
+        <input asp-for="OtherContact" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+<hr />
+
+<h4>Reset Password</h4>
+<form method="post" asp-page-handler="ResetPassword">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div class="mb-3">
+        <label for="NewPassword" class="form-label">New Password</label>
+        <input name="NewPassword" class="form-control" type="password" required />
+    </div>
+    <button type="submit" class="btn btn-warning">Reset Password</button>
+</form>
