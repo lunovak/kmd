@@ -32,6 +32,12 @@ builder.Services.AddScoped<SubscriptionService>();
 builder.Services.AddScoped<PerformanceService>();
 builder.Services.AddScoped<ReservationService>();
 
+// Email
+if (!string.IsNullOrWhiteSpace(builder.Configuration["Email:AzureCommunicationConnectionString"]))
+    builder.Services.AddSingleton<IEmailService, AzureCommunicationEmailService>();
+else
+    builder.Services.AddSingleton<IEmailService, LoggingEmailService>();
+
 // Authorization - require authenticated users by default
 builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(new AuthorizationPolicyBuilder()

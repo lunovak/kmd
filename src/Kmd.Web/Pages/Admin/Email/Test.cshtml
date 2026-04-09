@@ -1,0 +1,26 @@
+@page
+@model Kmd.Web.Pages.Admin.Email.TestModel
+@{
+    ViewData["Title"] = "Email Health Check";
+}
+
+<h1>Email Health Check</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<p>Send a test email to verify email configuration is working.</p>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="recipientEmail" class="form-label">Recipient Email</label>
+        <input type="email" class="form-control" id="recipientEmail" name="RecipientEmail" required style="max-width: 400px;" />
+    </div>
+    <button type="submit" class="btn btn-primary">Send Test Email</button>
+</form>
