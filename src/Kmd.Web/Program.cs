@@ -1,4 +1,5 @@
 using Kmd.Web.Data;
+using Kmd.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,10 +17,20 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Caching
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<CachedUserStore>();
+
 // Pages
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+// Seed roles and admin user
+using (var scope = app.Services.CreateScope())
+{
+    await SeedData.InitializeAsync(scope.ServiceProvider, app.Configuration);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
