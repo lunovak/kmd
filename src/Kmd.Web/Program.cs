@@ -33,6 +33,9 @@ builder.Services.AddScoped<PerformanceService>();
 builder.Services.AddScoped<ReservationService>();
 builder.Services.AddScoped<ReservationEmailService>();
 
+// Background services
+builder.Services.AddHostedService<ReminderService>();
+
 // Email
 if (!string.IsNullOrWhiteSpace(builder.Configuration["Email:AzureCommunicationConnectionString"]))
     builder.Services.AddSingleton<IEmailService, AzureCommunicationEmailService>();
