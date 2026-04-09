@@ -1,5 +1,6 @@
 using Kmd.Web.Data;
 using Kmd.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,12 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 // Caching
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<CachedUserStore>();
+
+// Authorization - require authenticated users by default
+builder.Services.AddAuthorizationBuilder()
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build());
 
 // Pages
 builder.Services.AddRazorPages();
