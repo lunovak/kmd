@@ -1,0 +1,53 @@
+@page
+@model Kmd.Web.Pages.Admin.Reservations.ByPerformanceModel
+@{
+    ViewData["Title"] = "Reservations by Performance";
+}
+
+<h1>Reservations by Performance</h1>
+
+<form method="get" class="mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-auto">
+            <label for="performanceId" class="form-label">Performance</label>
+            <select name="performanceId" id="performanceId" class="form-select">
+                <option value="">-- Select --</option>
+                @foreach (var p in Model.PerformanceOptions)
+                {
+                    <option value="@p.Id" selected="@(Model.PerformanceId == p.Id)">@p.Play.Name — @p.DateTime.ToString("g") (@p.Theatre.Name)</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-secondary">Show</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Reservations.Any())
+{
+    var active = Model.Reservations.Count(r => r.Status == Kmd.Web.Data.ReservationStatus.Active);
+    var cancelled = Model.Reservations.Count(r => r.Status == Kmd.Web.Data.ReservationStatus.Cancelled);
+    var offered = Model.Reservations.Count(r => r.Status == Kmd.Web.Data.ReservationStatus.Offered);
+    <p><strong>Summary:</strong> @active active, @cancelled cancelled, @offered offered</p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Member</th>
+            <th>Status</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.Reservations)
+        {
+            <tr class="@(r.Status == Kmd.Web.Data.ReservationStatus.Cancelled ? "table-secondary text-muted" : r.Status == Kmd.Web.Data.ReservationStatus.Offered ? "table-warning" : "")">
+                <td><a asp-page="ByMember" asp-route-userId="@r.UserId">@r.User.Email</a></td>
+                <td>@r.Status</td>
+                <td>@r.CreatedDate.ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,59 @@
+@page
+@model Kmd.Web.Pages.Admin.Reservations.ByMemberModel
+@{
+    ViewData["Title"] = "Reservations by Member";
+}
+
+<h1>Reservations by Member</h1>
+
+<form method="get" class="mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-auto">
+            <label for="userId" class="form-label">Member</label>
+            <select name="userId" id="userId" class="form-select">
+                <option value="">-- Select --</option>
+                @foreach (var m in Model.Members)
+                {
+                    <option value="@m.Id" selected="@(Model.MemberId == m.Id)">@m.Email</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-secondary">Show</button>
+        </div>
+    </div>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.MemberId))
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date / Time</th>
+                <th>Play</th>
+                <th>Theatre</th>
+                <th>Season / Wave</th>
+                <th>Status</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Reservations)
+            {
+                <tr class="@(r.Status == Kmd.Web.Data.ReservationStatus.Cancelled ? "table-secondary text-muted" : r.Status == Kmd.Web.Data.ReservationStatus.Offered ? "table-warning" : "")">
+                    <td>@r.Performance.DateTime.ToString("g")</td>
+                    <td>@r.Performance.Play.Name</td>
+                    <td>@r.Performance.Theatre.Name</td>
+                    <td>@r.Performance.ReservationWave.Season.Name / @r.Performance.ReservationWave.Name</td>
+                    <td>@r.Status</td>
+                    <td>@r.CreatedDate.ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Reservations.Any())
+    {
+        <p class="text-muted">No reservations found for this member.</p>
+    }
+}
