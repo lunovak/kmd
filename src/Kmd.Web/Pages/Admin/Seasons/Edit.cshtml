@@ -1,0 +1,25 @@
+@page "{id:int}"
+@model Kmd.Web.Pages.Admin.Seasons.EditModel
+@{
+    ViewData["Title"] = "Edit Season";
+}
+
+<h1>Edit Season</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form method="post">
+    <input type="hidden" asp-for="Season.Id" />
+    <div class="mb-3">
+        <label asp-for="Season.Name" class="form-label"></label>
+        <input asp-for="Season.Name" class="form-control" />
+        <span asp-validation-for="Season.Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Season.StartDate" class="form-label">Start Date</label>
+        <input asp-for="Season.StartDate" class="form-control" type="date" />
+        <span asp-validation-for="Season.StartDate" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>

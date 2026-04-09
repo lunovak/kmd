@@ -26,6 +26,7 @@ builder.Services.AddSingleton<CachedUserStore>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TheatreService>();
 builder.Services.AddScoped<PlayService>();
+builder.Services.AddScoped<SeasonService>();
 
 // Authorization - require authenticated users by default
 builder.Services.AddAuthorizationBuilder()

@@ -1,0 +1,46 @@
+@page
+@model Kmd.Web.Pages.Admin.Seasons.IndexModel
+@{
+    ViewData["Title"] = "Seasons";
+}
+
+<h1>Seasons</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Create New Season</a>
+</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th></th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var season in Model.Seasons)
+        {
+            var isLatest = season.Id == Model.LatestSeasonId;
+            <tr class="@(isLatest ? "table-info fw-bold" : "")">
+                <td>@season.Name</td>
+                <td>@season.StartDate.ToShortDateString()</td>
+                <td>@(isLatest ? "Current" : "")</td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@season.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a asp-page="Delete" asp-route-id="@season.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
