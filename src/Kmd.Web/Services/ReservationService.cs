@@ -6,10 +6,12 @@ namespace Kmd.Web.Services;
 public class ReservationService
 {
     private readonly ApplicationDbContext _db;
+    private readonly ReservationEmailService _emailService;
 
-    public ReservationService(ApplicationDbContext db)
+    public ReservationService(ApplicationDbContext db, ReservationEmailService emailService)
     {
         _db = db;
+        _emailService = emailService;
     }
 
     public async Task<ReservationResult> CreateReservationAsync(string userId, int performanceId, bool adminOverride = false)
@@ -98,6 +100,11 @@ public class ReservationService
             await _db.SaveChangesAsync();
             await transaction.CommitAsync();
 
+            // Load navigation properties and send confirmation email
+            var fullReservation = await GetByIdAsync(reservation.Id);
+            if (fullReservation != null)
+                _emailService.SendConfirmationInBackground(fullReservation);
+
             return new ReservationResult(true, "Reservation created successfully.");
         }
         catch
@@ -110,6 +117,11 @@ public class ReservationService
     public async Task<ReservationResult> CancelReservationAsync(string userId, int reservationId, bool forceCancel = false)
     {
         var reservation = await _db.Reservations
+            .Include(r => r.User)
+            .Include(r => r.Performance)
+                .ThenInclude(p => p.Play)
+            .Include(r => r.Performance)
+                .ThenInclude(p => p.Theatre)
             .Include(r => r.Performance)
                 .ThenInclude(p => p.ReservationWave)
             .FirstOrDefaultAsync(r => r.Id == reservationId);
@@ -136,6 +148,7 @@ public class ReservationService
             reservation.Status = ReservationStatus.Cancelled;
             reservation.LastUpdatedDate = now;
             await _db.SaveChangesAsync();
+            _emailService.SendCancellationInBackground(reservation, true);
             return new ReservationResult(true, "Reservation cancelled. The ticket has been freed and your season count decreased.", true);
         }
         else
@@ -144,6 +157,7 @@ public class ReservationService
             reservation.Status = ReservationStatus.Offered;
             reservation.LastUpdatedDate = now;
             await _db.SaveChangesAsync();
+            _emailService.SendCancellationInBackground(reservation, false);
             return new ReservationResult(true,
                 "Reservation offered. The ticket is available to others, but still counts toward your season limit until someone takes it.", false);
         }

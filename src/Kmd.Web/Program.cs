@@ -31,6 +31,7 @@ builder.Services.AddScoped<ReservationWaveService>();
 builder.Services.AddScoped<SubscriptionService>();
 builder.Services.AddScoped<PerformanceService>();
 builder.Services.AddScoped<ReservationService>();
+builder.Services.AddScoped<ReservationEmailService>();
 
 // Email
 if (!string.IsNullOrWhiteSpace(builder.Configuration["Email:AzureCommunicationConnectionString"]))
