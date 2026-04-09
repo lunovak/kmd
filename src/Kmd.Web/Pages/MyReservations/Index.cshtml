@@ -1,0 +1,131 @@
+@page
+@model Kmd.Web.Pages.MyReservations.IndexModel
+@{
+    ViewData["Title"] = "My Reservations";
+}
+
+<h1>My Reservations</h1>
+
+@if (Model.Subscription != null)
+{
+    <div class="alert alert-info">
+        <strong>Season:</strong> @Model.CurrentSeasonName —
+        <strong>Reservations:</strong> @Model.MemberSeasonCount / @Model.Subscription.ReservationsLimit
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@{
+    var upcoming = Model.Reservations.Where(r => r.Performance.DateTime >= DateTime.UtcNow).ToList();
+    var past = Model.Reservations.Where(r => r.Performance.DateTime < DateTime.UtcNow).ToList();
+}
+
+@if (upcoming.Any())
+{
+    <h4>Upcoming</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date / Time</th>
+                <th>Play</th>
+                <th>Theatre</th>
+                <th>Season / Wave</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in upcoming)
+            {
+                var wave = r.Performance.ReservationWave;
+                var cancelDeadline = r.Performance.DateTime.AddDays(-wave.CanCancelBeforeDays);
+                var canCancel = r.Status == Kmd.Web.Data.ReservationStatus.Active && DateTime.UtcNow <= cancelDeadline;
+                var canOffer = r.Status == Kmd.Web.Data.ReservationStatus.Active && DateTime.UtcNow > cancelDeadline;
+                <tr>
+                    <td>@r.Performance.DateTime.ToString("g")</td>
+                    <td>@r.Performance.Play.Name</td>
+                    <td>@r.Performance.Theatre.Name</td>
+                    <td>@wave.Season.Name / @wave.Name</td>
+                    <td>
+                        @if (r.Status == Kmd.Web.Data.ReservationStatus.Active)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else if (r.Status == Kmd.Web.Data.ReservationStatus.Offered)
+                        {
+                            <span class="badge bg-warning text-dark">Offered</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Cancelled</span>
+                        }
+                    </td>
+                    <td>
+                        @if (canCancel)
+                        {
+                            <a asp-page="Cancel" asp-route-id="@r.Id" class="btn btn-sm btn-outline-danger">Cancel</a>
+                        }
+                        else if (canOffer)
+                        {
+                            <a asp-page="Cancel" asp-route-id="@r.Id" class="btn btn-sm btn-outline-warning">Offer</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (past.Any())
+{
+    <h4 class="mt-4">Past</h4>
+    <table class="table table-secondary">
+        <thead>
+            <tr>
+                <th>Date / Time</th>
+                <th>Play</th>
+                <th>Theatre</th>
+                <th>Season / Wave</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in past)
+            {
+                <tr>
+                    <td>@r.Performance.DateTime.ToString("g")</td>
+                    <td>@r.Performance.Play.Name</td>
+                    <td>@r.Performance.Theatre.Name</td>
+                    <td>@r.Performance.ReservationWave.Season.Name / @r.Performance.ReservationWave.Name</td>
+                    <td>
+                        @if (r.Status == Kmd.Web.Data.ReservationStatus.Active)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else if (r.Status == Kmd.Web.Data.ReservationStatus.Offered)
+                        {
+                            <span class="badge bg-warning text-dark">Offered</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Cancelled</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!Model.Reservations.Any())
+{
+    <p class="text-muted">You have no reservations yet.</p>
+}
