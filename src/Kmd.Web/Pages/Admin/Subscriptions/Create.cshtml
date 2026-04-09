@@ -1,0 +1,44 @@
+@page
+@model Kmd.Web.Pages.Admin.Subscriptions.CreateModel
+@{
+    ViewData["Title"] = "Add Members to Season";
+}
+
+<h1>Add Members to Season</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form method="post">
+    <input type="hidden" asp-for="SeasonId" />
+    <div class="mb-3">
+        <label asp-for="DefaultLimit" class="form-label">Default Reservation Limit</label>
+        <input asp-for="DefaultLimit" class="form-control" type="number" min="1" style="max-width:200px" />
+        <span asp-validation-for="DefaultLimit" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Select Members</label>
+        @if (Model.AvailableMembers.Any())
+        {
+            <div class="border rounded p-2" style="max-height:400px;overflow-y:auto">
+                @foreach (var member in Model.AvailableMembers)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="SelectedUserIds" value="@member.Id" id="m_@member.Id" />
+                        <label class="form-check-label" for="m_@member.Id">
+                            @member.Email @(string.IsNullOrEmpty(member.ClassName) ? "" : $"({member.ClassName})")
+                        </label>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">All active members are already subscribed to this season.</p>
+        }
+    </div>
+    @if (Model.AvailableMembers.Any())
+    {
+        <button type="submit" class="btn btn-primary">Add Selected</button>
+    }
+    <a asp-page="Index" asp-route-seasonId="@Model.SeasonId" class="btn btn-secondary">Cancel</a>
+</form>

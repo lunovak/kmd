@@ -28,6 +28,7 @@ builder.Services.AddScoped<TheatreService>();
 builder.Services.AddScoped<PlayService>();
 builder.Services.AddScoped<SeasonService>();
 builder.Services.AddScoped<ReservationWaveService>();
+builder.Services.AddScoped<SubscriptionService>();
 
 // Authorization - require authenticated users by default
 builder.Services.AddAuthorizationBuilder()
