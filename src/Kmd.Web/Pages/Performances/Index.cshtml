@@ -1,0 +1,114 @@
+@page
+@model Kmd.Web.Pages.Performances.IndexModel
+@{
+    ViewData["Title"] = "Performances";
+}
+
+<h1>Available Performances</h1>
+
+@if (Model.Subscription != null)
+{
+    <div class="alert alert-info">
+        <strong>Your reservations:</strong> @Model.MemberActiveReservationCount / @Model.Subscription.ReservationsLimit for season @Model.CurrentSeasonName
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@foreach (var group in Model.WaveGroups)
+{
+    var wave = group.Wave;
+    var isPriority = DateTime.UtcNow < wave.StartDate.AddDays(wave.PriorityPhaseLengthDays);
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>@wave.Name</strong> — @wave.Season.Name
+            @if (isPriority)
+            {
+                <span class="badge bg-warning text-dark ms-2">Priority phase — 1 reservation per wave (ends @wave.StartDate.AddDays(wave.PriorityPhaseLengthDays).ToString("d"))</span>
+            }
+            else
+            {
+                <span class="badge bg-success ms-2">Open — reserve freely</span>
+            }
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Date / Time</th>
+                        <th>Play</th>
+                        <th>Theatre</th>
+                        <th>Available</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in group.Performances)
+                    {
+                        var available = item.Performance.Capacity - item.ActiveCount;
+                        var isFullyBooked = available <= 0;
+                        var hasReserved = item.MemberReservationStatus != null;
+                        <tr class="@(isFullyBooked && !hasReserved ? "table-secondary text-muted" : "")">
+                            <td>@item.Performance.DateTime.ToString("g")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Performance.Play.Url))
+                                {
+                                    <a href="@item.Performance.Play.Url" target="_blank">@item.Performance.Play.Name</a>
+                                }
+                                else
+                                {
+                                    @item.Performance.Play.Name
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Performance.Theatre.Url))
+                                {
+                                    <a href="@item.Performance.Theatre.Url" target="_blank">@item.Performance.Theatre.Name</a>
+                                }
+                                else
+                                {
+                                    @item.Performance.Theatre.Name
+                                }
+                            </td>
+                            <td>
+                                @if (isFullyBooked)
+                                {
+                                    <span class="badge bg-danger">Fully booked</span>
+                                }
+                                else
+                                {
+                                    <span>@available / @item.Performance.Capacity</span>
+                                }
+                            </td>
+                            <td>
+                                @if (hasReserved)
+                                {
+                                    <span class="badge bg-primary">@item.MemberReservationStatus</span>
+                                }
+                                else if (!isFullyBooked)
+                                {
+                                    <form method="post" asp-page-handler="Reserve" class="d-inline">
+                                        <input type="hidden" name="performanceId" value="@item.Performance.Id" />
+                                        <button type="submit" class="btn btn-sm btn-success">Reserve</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (!Model.WaveGroups.Any())
+{
+    <p class="text-muted">No performances are currently available for reservation.</p>
+}

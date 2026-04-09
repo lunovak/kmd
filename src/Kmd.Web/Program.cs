@@ -30,6 +30,7 @@ builder.Services.AddScoped<SeasonService>();
 builder.Services.AddScoped<ReservationWaveService>();
 builder.Services.AddScoped<SubscriptionService>();
 builder.Services.AddScoped<PerformanceService>();
+builder.Services.AddScoped<ReservationService>();
 
 // Authorization - require authenticated users by default
 builder.Services.AddAuthorizationBuilder()

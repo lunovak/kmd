@@ -31,6 +31,20 @@ public class PerformanceService
         return await query.OrderBy(p => p.DateTime).ToListAsync();
     }
 
+    public async Task<List<Performance>> GetOpenPerformancesAsync()
+    {
+        var now = DateTime.UtcNow;
+        return await _db.Performances
+            .Include(p => p.Play)
+            .Include(p => p.Theatre)
+            .Include(p => p.ReservationWave).ThenInclude(w => w.Season)
+            .Include(p => p.Reservations)
+            .Where(p => p.DateTime > now && p.ReservationWave.StartDate <= now)
+            .OrderBy(p => p.ReservationWave.StartDate)
+            .ThenBy(p => p.DateTime)
+            .ToListAsync();
+    }
+
     public async Task<Performance?> GetByIdAsync(int id) =>
         await _db.Performances
             .Include(p => p.Play).ThenInclude(pl => pl.Theatre)
