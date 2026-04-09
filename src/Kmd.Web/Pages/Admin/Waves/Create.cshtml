@@ -1,0 +1,41 @@
+@page
+@model Kmd.Web.Pages.Admin.Waves.CreateModel
+@{
+    ViewData["Title"] = "Create Reservation Wave";
+}
+
+<h1>Create Reservation Wave</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Wave.SeasonId" class="form-label">Season</label>
+        <select asp-for="Wave.SeasonId" asp-items="Model.SeasonOptions" class="form-select">
+            <option value="">-- Select Season --</option>
+        </select>
+        <span asp-validation-for="Wave.SeasonId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Wave.Name" class="form-label"></label>
+        <input asp-for="Wave.Name" class="form-control" />
+        <span asp-validation-for="Wave.Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Wave.StartDate" class="form-label">Start Date</label>
+        <input asp-for="Wave.StartDate" class="form-control" type="date" />
+        <span asp-validation-for="Wave.StartDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Wave.PriorityPhaseLengthDays" class="form-label">Priority Phase Length (days)</label>
+        <input asp-for="Wave.PriorityPhaseLengthDays" class="form-control" type="number" min="0" />
+        <span asp-validation-for="Wave.PriorityPhaseLengthDays" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Wave.CanCancelBeforeDays" class="form-label">Can Cancel Before (days)</label>
+        <input asp-for="Wave.CanCancelBeforeDays" class="form-control" type="number" min="0" />
+        <span asp-validation-for="Wave.CanCancelBeforeDays" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>

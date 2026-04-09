@@ -1,0 +1,30 @@
+@page "{id:int}"
+@model Kmd.Web.Pages.Admin.Waves.DeleteModel
+@{
+    ViewData["Title"] = "Delete Reservation Wave";
+}
+
+<h1>Delete Reservation Wave</h1>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<h3>Are you sure you want to delete this wave?</h3>
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.Wave.Name</dd>
+        <dt class="col-sm-3">Season</dt>
+        <dd class="col-sm-9">@Model.Wave.Season?.Name</dd>
+        <dt class="col-sm-3">Start Date</dt>
+        <dd class="col-sm-9">@Model.Wave.StartDate.ToShortDateString()</dd>
+    </dl>
+    <form method="post">
+        <input type="hidden" asp-for="Wave.Id" />
+        <input type="hidden" name="seasonId" value="@Model.Wave.SeasonId" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-page="Index" asp-route-seasonId="@Model.Wave.SeasonId" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
