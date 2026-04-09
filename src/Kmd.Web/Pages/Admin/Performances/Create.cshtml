@@ -1,0 +1,66 @@
+@page
+@model Kmd.Web.Pages.Admin.Performances.CreateModel
+@{
+    ViewData["Title"] = "Create Performance";
+}
+
+<h1>Create Performance</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="PlayId" class="form-label">Play</label>
+        <select asp-for="PlayId" asp-items="Model.PlayOptions" class="form-select">
+            <option value="">-- Select Play --</option>
+        </select>
+        <span asp-validation-for="PlayId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SeasonId" class="form-label">Season</label>
+        <select asp-for="SeasonId" asp-items="Model.SeasonOptions" class="form-select">
+            <option value="">-- Select Season --</option>
+        </select>
+        <span asp-validation-for="SeasonId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReservationWaveId" class="form-label">Reservation Wave</label>
+        <select asp-for="ReservationWaveId" asp-items="Model.WaveOptions" class="form-select">
+            <option value="">-- Select Wave --</option>
+        </select>
+        <span asp-validation-for="ReservationWaveId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DateTime" class="form-label">Date &amp; Time</label>
+        <input asp-for="DateTime" class="form-control" type="datetime-local" />
+        <span asp-validation-for="DateTime" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Capacity" class="form-label"></label>
+        <input asp-for="Capacity" class="form-control" type="number" min="1" />
+        <span asp-validation-for="Capacity" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+<script>
+    document.getElementById('SeasonId').addEventListener('change', function () {
+        const seasonId = this.value;
+        const waveSelect = document.getElementById('ReservationWaveId');
+        if (!seasonId) { waveSelect.innerHTML = '<option value="">-- Select Wave --</option>'; return; }
+        fetch(`?handler=Waves&seasonId=${seasonId}`)
+            .then(r => r.json())
+            .then(waves => {
+                waveSelect.innerHTML = '<option value="">-- Select Wave --</option>';
+                waves.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w.id;
+                    opt.textContent = w.name;
+                    waveSelect.appendChild(opt);
+                });
+            });
+    });
+</script>
+}
