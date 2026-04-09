@@ -1,0 +1,29 @@
+@page "{id:int}"
+@model Kmd.Web.Pages.Admin.Theatres.EditModel
+@{
+    ViewData["Title"] = "Edit Theatre";
+}
+
+<h1>Edit Theatre</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form method="post">
+    <input type="hidden" asp-for="Theatre.Id" />
+    <div class="mb-3">
+        <label asp-for="Theatre.Name" class="form-label"></label>
+        <input asp-for="Theatre.Name" class="form-control" />
+        <span asp-validation-for="Theatre.Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Theatre.Url" class="form-label">URL</label>
+        <input asp-for="Theatre.Url" class="form-control" type="url" />
+        <span asp-validation-for="Theatre.Url" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Theatre.Notes" class="form-label"></label>
+        <textarea asp-for="Theatre.Notes" class="form-control" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>

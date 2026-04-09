@@ -1,0 +1,50 @@
+@page
+@model Kmd.Web.Pages.Admin.Theatres.IndexModel
+@{
+    ViewData["Title"] = "Theatres";
+}
+
+<h1>Theatres</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Create New Theatre</a>
+</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>URL</th>
+            <th>Notes</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var theatre in Model.Theatres)
+        {
+            <tr>
+                <td>@theatre.Name</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(theatre.Url))
+                    {
+                        <a href="@theatre.Url" target="_blank">@theatre.Url</a>
+                    }
+                </td>
+                <td>@theatre.Notes</td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@theatre.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a asp-page="Delete" asp-route-id="@theatre.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
