@@ -26,6 +26,18 @@
 
 @if (!string.IsNullOrEmpty(Model.MemberId))
 {
+    <p>
+        <a asp-page="Create" class="btn btn-primary">Reserve for Member</a>
+    </p>
+
+    if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
     <table class="table">
         <thead>
             <tr>
@@ -35,6 +47,7 @@
                 <th>Season / Wave</th>
                 <th>Status</th>
                 <th>Created</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -47,6 +60,12 @@
                     <td>@r.Performance.ReservationWave.Season.Name / @r.Performance.ReservationWave.Name</td>
                     <td>@r.Status</td>
                     <td>@r.CreatedDate.ToString("g")</td>
+                    <td>
+                        @if (r.Status == Kmd.Web.Data.ReservationStatus.Active)
+                        {
+                            <a asp-page="Cancel" asp-route-id="@r.Id" class="btn btn-sm btn-outline-danger">Cancel</a>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>

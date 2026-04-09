@@ -1,0 +1,52 @@
+@page "{id:int}"
+@model Kmd.Web.Pages.Admin.Reservations.CancelModel
+@{
+    ViewData["Title"] = "Cancel Reservation (Admin)";
+}
+
+<h1>Cancel Reservation</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Member</dt>
+            <dd class="col-sm-9">@Model.Reservation.User.Email</dd>
+            <dt class="col-sm-3">Play</dt>
+            <dd class="col-sm-9">@Model.Reservation.Performance.Play.Name</dd>
+            <dt class="col-sm-3">Theatre</dt>
+            <dd class="col-sm-9">@Model.Reservation.Performance.Theatre.Name</dd>
+            <dt class="col-sm-3">Date / Time</dt>
+            <dd class="col-sm-9">@Model.Reservation.Performance.DateTime.ToString("g")</dd>
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">@Model.Reservation.Status</dd>
+        </dl>
+    </div>
+</div>
+
+@if (Model.IsTimelyCancellation)
+{
+    <div class="alert alert-info">
+        <strong>Timely cancellation.</strong> The ticket will be freed and the member's season count will decrease.
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        <strong>Late cancellation.</strong> Normally this would mark the reservation as "Offered."
+        As an admin, you can force-cancel to fully free the ticket.
+    </div>
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Reservation.Id" />
+    <button type="submit" name="forceCancel" value="false" class="btn btn-danger">
+        @(Model.IsTimelyCancellation ? "Cancel Reservation" : "Offer (standard)")
+    </button>
+    @if (!Model.IsTimelyCancellation)
+    {
+        <button type="submit" name="forceCancel" value="true" class="btn btn-dark">
+            Force Cancel (override)
+        </button>
+    }
+    <a asp-page="BySeason" class="btn btn-secondary">Back</a>
+</form>

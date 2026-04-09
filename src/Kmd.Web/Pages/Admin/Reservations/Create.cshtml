@@ -1,0 +1,42 @@
+@page
+@model Kmd.Web.Pages.Admin.Reservations.CreateModel
+@{
+    ViewData["Title"] = "Reserve for Member";
+}
+
+<h1>Reserve for Member</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="UserId" class="form-label">Member</label>
+        <select asp-for="UserId" class="form-select">
+            <option value="">-- Select Member --</option>
+            @foreach (var m in Model.Members)
+            {
+                <option value="@m.Id">@m.Email</option>
+            }
+        </select>
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PerformanceId" class="form-label">Performance</label>
+        <select asp-for="PerformanceId" class="form-select">
+            <option value="">-- Select Performance --</option>
+            @foreach (var p in Model.PerformanceOptions)
+            {
+                var activeCount = p.Reservations.Count(r => r.Status == Kmd.Web.Data.ReservationStatus.Active);
+                <option value="@p.Id">@p.Play.Name — @p.DateTime.ToString("g") (@p.Theatre.Name) [@activeCount/@p.Capacity]</option>
+            }
+        </select>
+        <span asp-validation-for="PerformanceId" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Reserve</button>
+    <a asp-page="BySeason" class="btn btn-secondary">Cancel</a>
+</form>

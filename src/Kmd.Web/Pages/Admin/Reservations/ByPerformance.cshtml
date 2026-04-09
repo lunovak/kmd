@@ -24,6 +24,22 @@
     </div>
 </form>
 
+@if (Model.PerformanceId.HasValue)
+{
+    <p>
+        <a asp-page="Create" class="btn btn-primary">Reserve for Member</a>
+    </p>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
 @if (Model.Reservations.Any())
 {
     var active = Model.Reservations.Count(r => r.Status == Kmd.Web.Data.ReservationStatus.Active);
@@ -38,6 +54,7 @@
             <th>Member</th>
             <th>Status</th>
             <th>Created</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -47,6 +64,12 @@
                 <td><a asp-page="ByMember" asp-route-userId="@r.UserId">@r.User.Email</a></td>
                 <td>@r.Status</td>
                 <td>@r.CreatedDate.ToString("g")</td>
+                <td>
+                    @if (r.Status == Kmd.Web.Data.ReservationStatus.Active)
+                    {
+                        <a asp-page="Cancel" asp-route-id="@r.Id" class="btn btn-sm btn-outline-danger">Cancel</a>
+                    }
+                </td>
             </tr>
         }
     </tbody>
