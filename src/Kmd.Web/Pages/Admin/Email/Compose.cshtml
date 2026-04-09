@@ -1,0 +1,94 @@
+@page
+@model Kmd.Web.Pages.Admin.Email.ComposeModel
+@{
+    ViewData["Title"] = "Send Bulk Email";
+}
+
+<h1>Send Bulk Email</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label">Recipients</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="RecipientType" id="recipientSeason" value="Season"
+                   checked="@(Model.RecipientType == "Season")" />
+            <label class="form-check-label" for="recipientSeason">All members of a season</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="RecipientType" id="recipientPerformance" value="Performance"
+                   checked="@(Model.RecipientType == "Performance")" />
+            <label class="form-check-label" for="recipientPerformance">All attendees of a performance</label>
+        </div>
+    </div>
+
+    <div class="mb-3" id="seasonSelector">
+        <label for="SeasonId" class="form-label">Season</label>
+        <select name="SeasonId" id="SeasonId" class="form-select" style="max-width: 400px;">
+            <option value="">-- Select Season --</option>
+            @foreach (var s in Model.Seasons)
+            {
+                <option value="@s.Id" selected="@(Model.SeasonId == s.Id)">@s.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3" id="performanceSelector">
+        <label for="PerformanceId" class="form-label">Performance</label>
+        <select name="PerformanceId" id="PerformanceId" class="form-select" style="max-width: 400px;">
+            <option value="">-- Select Performance --</option>
+            @foreach (var p in Model.Performances)
+            {
+                <option value="@p.Id" selected="@(Model.PerformanceId == p.Id)">@p.Play.Name — @p.DateTime.ToString("g") (@p.Theatre.Name)</option>
+            }
+        </select>
+    </div>
+
+    @if (Model.RecipientCount.HasValue)
+    {
+        <div class="alert alert-info">
+            <strong>@Model.RecipientCount</strong> recipient(s) will receive this email.
+        </div>
+    }
+
+    <div class="mb-3">
+        <label for="Subject" class="form-label">Subject</label>
+        <input type="text" class="form-control" id="Subject" name="Subject" value="@Model.Subject" required style="max-width: 600px;" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Body" class="form-label">Body (HTML supported)</label>
+        <textarea class="form-control" id="Body" name="Body" rows="10" required>@Model.Body</textarea>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" asp-page-handler="Preview" class="btn btn-outline-secondary">Preview Recipients</button>
+        @if (Model.RecipientCount.HasValue && Model.RecipientCount > 0)
+        {
+            <button type="submit" asp-page-handler="Send" class="btn btn-primary"
+                    onclick="return confirm('Are you sure you want to send this email to @Model.RecipientCount recipient(s)?');">
+                Send Email
+            </button>
+        }
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function toggleSelectors() {
+            var type = document.querySelector('input[name="RecipientType"]:checked').value;
+            document.getElementById('seasonSelector').style.display = type === 'Season' ? '' : 'none';
+            document.getElementById('performanceSelector').style.display = type === 'Performance' ? '' : 'none';
+        }
+        document.querySelectorAll('input[name="RecipientType"]').forEach(r => r.addEventListener('change', toggleSelectors));
+        toggleSelectors();
+    </script>
+}
