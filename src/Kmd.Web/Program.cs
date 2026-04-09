@@ -49,6 +49,9 @@ builder.Services.AddAuthorizationBuilder()
         .RequireAuthenticatedUser()
         .Build());
 
+// Application Insights
+builder.Services.AddApplicationInsightsTelemetry();
+
 // Pages
 builder.Services.AddRazorPages();
 
