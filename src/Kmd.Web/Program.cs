@@ -35,6 +35,7 @@ builder.Services.AddScoped<ReservationEmailService>();
 
 // Background services
 builder.Services.AddHostedService<ReminderService>();
+builder.Services.AddHostedService<AvailabilityAlertService>();
 
 // Email
 if (!string.IsNullOrWhiteSpace(builder.Configuration["Email:AzureCommunicationConnectionString"]))

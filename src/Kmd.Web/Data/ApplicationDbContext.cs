@@ -17,6 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Performance> Performances => Set<Performance>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
+    public DbSet<NotificationLog> NotificationLogs => Set<NotificationLog>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -100,5 +101,21 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Reservation>()
             .Property(r => r.Status)
             .HasConversion<string>();
+
+        // NotificationLog
+        builder.Entity<NotificationLog>(e =>
+        {
+            e.HasOne(n => n.User)
+                .WithMany()
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(n => n.Performance)
+                .WithMany()
+                .HasForeignKey(n => n.PerformanceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasIndex(n => new { n.UserId, n.PerformanceId, n.NotificationType });
+        });
     }
 }
